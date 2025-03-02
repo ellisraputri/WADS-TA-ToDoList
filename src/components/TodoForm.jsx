@@ -20,7 +20,7 @@ export const TodoForm = ({addToDo}) => {
                 onChange={(e) => setValue(e.target.value)}>
             </input>
 
-            <button type="submit" className="todo-btn border font-bold text-blue-900 border-blue-900 p-2 rounded-2xl hover:cursor-pointer hover:text-white hover:bg-blue-900">
+            <button type="submit" className="todo-btn font-bold text-blue-900 border-l-blue-900 shadow-md bg-white  border-b-blue-900 p-2 rounded-2xl hover:cursor-pointer hover:bg-blue-50">
                 Add Task</button>
         </form>
     )

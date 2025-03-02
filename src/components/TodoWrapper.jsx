@@ -64,8 +64,10 @@ export const TodoWrapper = () => {
     }
 
     return (
-        <div className="TodoWrapper m-8 border-4 rounded-2xl flex flex-col items-center gap-4 p-4">
-            <button className='border border-blue-900 p-2 rounded-2xl text-blue-900 font-bold hover:cursor-pointer hover:text-white hover:bg-blue-900 mb-2 ' onClick={toggleCompletedFilter}>
+        <>
+        <h1 className='text-3xl mt-10 text-center font-bold text-blue-950 m-3 underline'>To Do List</h1>
+        <div className="TodoWrapper m-8 flex flex-col items-center gap-4 p-4">
+            <button className='border-l-blue-900 border-b-blue-900 p-2 rounded-2xl text-blue-900 shadow-md bg-white font-bold hover:cursor-pointer hover:bg-blue-50 mb-2 ' onClick={toggleCompletedFilter}>
                 {showCompleted ? 'Show All' : 'Show Completed'}
             </button>
 
@@ -87,5 +89,6 @@ export const TodoWrapper = () => {
                 )
             ))}
         </div>
+        </>
     )
 }

@@ -1,16 +1,22 @@
 // import { useState } from 'react'
 import { TodoWrapper } from './components/TodoWrapper'
+import LandingPage from './components/LandingPage';
+import Navbar from './components/Navbar';
+import ProfilePage from './components/ProfilePage';
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
 
   return (
-    <div className="App">
-            <h1 className='text-3xl font-bold text-neutral-950 m-3 underline'>To Do List</h1>
-            <Router>
+    <div className="App w-full h-full">
+      <Router>
+            <Navbar></Navbar>
+            
                 <Routes>
-                    <Route path='/' element={<TodoWrapper />}></Route>
+                    <Route path='/' element={<LandingPage />}></Route>
+                    <Route path='/todolist' element={<TodoWrapper />}></Route>
+                    <Route path='/profile' element={<ProfilePage />}></Route>
                 </Routes>
             </Router>
         </div>
