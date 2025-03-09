@@ -2,9 +2,16 @@ import React from 'react';
 import { faNoteSticky } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useLocation } from 'react-router-dom';
+import { logout } from '../firebase';
 
 function Navbar() {
   const location = useLocation(); 
+
+  const handleLogout =()=>{
+    if (window.confirm("Are you sure you want to log out?")) {
+      logout();
+    }
+  }
 
   const isActive = (path) => location.pathname === path ? 'text-blue-500' : 'text-white hover:text-blue-500';
 
@@ -36,13 +43,16 @@ function Navbar() {
         <div className="hidden w-full md:block md:w-auto" id="navbar-default">
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
-              <Link to="/" className={`block py-2 px-3 md:p-0 ${isActive('/')}`} aria-current="page">Home</Link>
+              <Link to="/landing" className={`block py-2 px-3 md:p-0 ${isActive('/landing')}`} aria-current="page">Home</Link>
             </li>
             <li>
               <Link to="/todolist" className={`block py-2 px-3 md:p-0 ${isActive('/todolist')}`}>To Do List</Link>
             </li>
             <li>
               <Link to="/profile" className={`block py-2 px-3 md:p-0 ${isActive('/profile')}`}>Profile</Link>
+            </li>
+            <li>
+              <Link to={location} className={`block py-2 px-3 md:p-0 text-white hover:text-blue-500`} onClick={handleLogout}>Logout</Link>
             </li>
           </ul>
         </div>

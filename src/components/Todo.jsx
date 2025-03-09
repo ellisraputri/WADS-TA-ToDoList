@@ -10,11 +10,11 @@ export const Todo = ({task, toggleComplete, deleteToDo, editToDo}) => {
                 className={`${task.completed ? 'completed' : ""} m-2 text-xl font-bold text-blue-900`}>{task.task}
             </p>
 
-            <div>
+            <div className='flex justify-between gap-0.5 mt-3'>
                 <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleComplete(task.id)}
+                    onChange={() => toggleComplete(task.id, task.completed)}
                     className='mr-4 accent-blue-900 size-4 hover:cursor-pointer'
                 />
                 <span className="checkmark"></span>

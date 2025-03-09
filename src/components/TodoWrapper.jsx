@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Todo } from './Todo.jsx';
 import { TodoForm } from './TodoForm.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { EditTodoForm } from './EditTodoForm.jsx';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db, logout } from "../firebase";
+import { collection, addDoc, query, getDocs, where, doc, updateDoc, deleteDoc } from "firebase/firestore";
+
 
 uuidv4();
 
@@ -12,24 +16,49 @@ export const TodoWrapper = () => {
     const [showCompleted, setShowCompleted] = useState(false);
     const navigate = useNavigate();
 
-    const addToDo = toDo => {
-        setToDos([...toDos, {
-            id: uuidv4(),
-            task: toDo,
-            completed: false,
-            isEditing: false
-        }]);
-
-        console.log(toDos);
+    const addToDo = async(toDo) => {
+        try {
+            const newTodo = {
+                task: toDo,
+                completed: false,
+                userId: user.uid,
+            }
+    
+            const docRef = await addDoc(collection(db, "todos"), newTodo);
+            setToDos([...toDos, {
+                id: docRef.id,
+                ...newTodo,
+                isEditing: false
+            }]);
+            console.log(toDos);
+        } catch (error) {
+            console.error("Error adding To-Do:", error);
+        }
+        
     }
 
-    const toggleComplete = id => {
-        setToDos(toDos.map(todo => todo.id === id ? {...
-        todo, completed: !todo.completed} : todo ))
+    const toggleComplete = async(id,completed) => {
+        try {
+            const todoRef = doc(db, "todos", id);
+            await updateDoc(todoRef, { completed: !completed });
+
+            setToDos(toDos.map(todo => todo.id === id ? {...
+                todo, completed: !todo.completed} : todo ))
+        } catch (error) {
+            console.error("Error toggle:", error);
+        }
     }
 
-    const deleteToDo = id => {
-        setToDos(toDos.filter(todo => todo.id !== id))
+    const deleteToDo = async(id) => {
+        try {
+            const todoRef = doc(db, "todos", id);
+            await deleteDoc(todoRef);
+
+            setToDos(toDos.filter(todo => todo.id !== id));
+        } catch (error) {
+            console.error("Error delete:", error);
+        }
+        
     }
 
     const editToDo = id => {
@@ -37,9 +66,17 @@ export const TodoWrapper = () => {
             todo, isEditing: !todo.isEditing} : todo));
     }
 
-    const editTask = (newTask, id) => {
-        setToDos(toDos.map(todo => todo.id === id ? { ...
-            todo, task: newTask, isEditing: false } : todo));
+    const editTask = async(newTask, id) => {
+        try {
+            const todoRef = doc(db, "todos", id);
+            await updateDoc(todoRef, {task:newTask});
+
+            setToDos(toDos.map(todo => todo.id === id ? { ...
+                todo, task: newTask, isEditing: false } : todo));
+        } catch (error) {
+            console.error("Error edit:", error);
+        }
+        
     };
     
 
@@ -59,9 +96,42 @@ export const TodoWrapper = () => {
         );
     };
 
-    const showProfile = () => {
-        navigate('/profile')
-    }
+    const [user, loading, error] = useAuthState(auth);
+    const [name, setName] = useState("");
+    const fetchUserName = async () => {
+        try {
+            const q = query(collection(db, "users"), where("uid", "==", user?.uid));
+            const doc = await getDocs(q);
+            const data = doc.docs[0].data();
+            setName(data.name);
+        } catch (err) {
+            console.error(err);
+            alert("An error occured while fetching user data");
+        }
+    };
+
+    const fetchToDos = async () => {
+        try {
+            const q = query(collection(db, "todos"), where("userId", "==", user?.uid));
+            const querySnapshot = await getDocs(q);
+            const todosList = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setToDos(todosList);
+
+        } catch (err) {
+            console.error(err);
+            alert("An error occured while fetching user data");
+        }
+    };
+
+    useEffect(() => {
+        if (loading) return;
+        if (!user) return navigate("/");
+        fetchUserName();
+        fetchToDos();
+    }, [user, loading]);
 
     return (
         <>

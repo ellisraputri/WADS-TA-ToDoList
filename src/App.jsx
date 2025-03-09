@@ -1,26 +1,38 @@
-// import { useState } from 'react'
-import { TodoWrapper } from './components/TodoWrapper'
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { TodoWrapper } from './components/TodoWrapper';
 import LandingPage from './components/LandingPage';
 import Navbar from './components/Navbar';
 import ProfilePage from './components/ProfilePage';
-import './App.css'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import './App.css';
+import RegisterPage from './components/RegisterPage';
+import ResetPage from './components/ResetPage';
 
-function App() {
+function AppContent() {
+  const location = useLocation(); 
+  const hideNavbar = location.pathname === '/' || location.pathname==='/register' || location.pathname==='/reset';
 
   return (
     <div className="App w-full h-full">
-      <Router>
-            <Navbar></Navbar>
-            
-                <Routes>
-                    <Route path='/' element={<LandingPage />}></Route>
-                    <Route path='/todolist' element={<TodoWrapper />}></Route>
-                    <Route path='/profile' element={<ProfilePage />}></Route>
-                </Routes>
-            </Router>
-        </div>
-  )
+      {!hideNavbar && <Navbar />} 
+      <Routes>
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/reset' element={<ResetPage />} />
+        <Route path='/landing' element={<LandingPage />} />
+        <Route path='/todolist' element={<TodoWrapper />} />
+        <Route path='/profile' element={<ProfilePage />} />
+      </Routes>
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+export default App;
